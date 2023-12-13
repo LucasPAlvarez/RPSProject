@@ -34,48 +34,22 @@ public class GameLogic {
     }
 
     public static void playTurn(Picks pick){
-        if(gameUI != null){
-            gameUI.ChangeLoggerText("Submited your pick, waiting for opponent.");
-
-            if(pick == Picks.NONE){
-                gameUI.ChangeLoggerText("you must pick one of the options before submiting.");
-            }else{
-                playerPick = pick;
-                if(!playingOnline){
-                    botTurn();
-                }else{
-                    op.sendPick(playerPick);
-                    while(oponentPick.equals(Picks.NONE)){}
-                }
-                int result = compare();
-                if(result>0){
-                    playerScoore++;
-                    gameUI.ChangeLoggerText("You win");
-                }else{
-                    if(result < 0){
-                        opponenetScoore++;
-                        gameUI.ChangeLoggerText("You loose");
-                    }else{
-                        gameUI.ChangeLoggerText("It's a tie");
-                    }
-                }
-                updateScore();
-                playerPick = Picks.NONE;
-                oponentPick = Picks.NONE;
-                gameUI.buttonsTurnOn();
-                //gameUI.ChangeLoggerText("Finished");
-            }
-
-        }else{
-            System.err.println("No existe el UI");
-        }
+        Thread turn = new Thread(new TurnLogic(pick));
+        turn.start();
     };
 
-    private static void updateScore() {
+    public static void incrisePlayerScoore() {
+        ++playerScoore;
+    }
+    public static void incriseOpponentScoore(){
+        ++opponenetScoore;
+    }
+
+    public static void updateScore() {
         gameUI.updateScoores(playerScoore, opponenetScoore);
     }
 
-    private static void botTurn(){
+    public static void botTurn(){
         if(botLogic == null){
             botLogic = new Random(System.currentTimeMillis());
         }
@@ -90,10 +64,7 @@ public class GameLogic {
         playingOnline = t;
     }
 
-
-
-
-    private static int compare(){
+    public static int compare(){
         switch (playerPick) {
             case SCISSORS:
                 switch (oponentPick) {
@@ -141,6 +112,24 @@ public class GameLogic {
     public static void onlineOpponentPick(String input) {
         oponentPick = Picks.values()[Integer.parseInt(input)];
 
+    }
+
+    public static void startTurnOver() {
+        playerPick = Picks.NONE;
+        oponentPick = Picks.NONE;
+        gameUI.buttonsTurnOn();
+    }
+
+    public static void sendPlayerPick() {
+        op.sendPick(playerPick);
+    }
+
+    public static void setPlayerPick(Picks pick) {
+        playerPick = pick;
+    }
+
+    public static boolean getPlayingOnline() {
+        return playingOnline;
     }
 
 }

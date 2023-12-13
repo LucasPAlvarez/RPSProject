@@ -1,9 +1,6 @@
 package com.rpsproject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -28,14 +25,14 @@ public class Temp implements Runnable{
             //if not host
             try {
                 ServerSocket server = new ServerSocket(9806);
-                OnlinePlay.socket = server.accept();
+                socket = server.accept();
                 server.close();
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
-        OnlinePlay.startListenner();
+        
         OnlinePlay.con(socket);
         foundConnection = false;
        
